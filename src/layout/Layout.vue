@@ -2,12 +2,17 @@
 import TodosVue from '../components/Todos.vue';
 import MenuVue from '../components/Menu.vue';
 
+import { useTheme } from '../store';
+
+const themeState = useTheme();
+
 </script>
 
 <template>
+    <button @click="themeState.changeMode">change</button>
     <div class="layout">
         <div class="menu h">
-            <menu-vue></menu-vue>
+            <menu-vue :showNum="true"></menu-vue>
         </div>
         <div class="main h">
             <todos-vue></todos-vue>

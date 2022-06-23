@@ -1,43 +1,48 @@
 <script setup lang="ts">
-import { reactive, toRefs } from 'vue'
+import { reactive, toRefs, ref } from 'vue';
+import { useTodo } from '../store';
+import { useTheme } from '../store';
 
-const todoState = reactive({
-    id: 0,
-    title: 'Sunday',
-    isLocked: false,
-    todosNum: 2
-})
-const { id, title, isLocked, todosNum } = toRefs(todoState)
+import { storeToRefs } from 'pinia';
+import MenuVue from './Menu.vue';
 
-const changeLockState: () => void = () => {
-    isLocked.value = !isLocked.value
-}
+const todoState = useTodo();
+
+const showCollapseMenu = ref(false);
+
+const { id, title, isLocked, todosNum, todoList } = storeToRefs(todoState);
+
+const {mode} = storeToRefs(useTheme());
 
 </script>
 
 <template>
-    <div class="todo-list-main">
-        <div class="main-header">
-            <div class="todo-title">
+    <div class="todo-list-main" :class="mode">
+        <div class="main-header" :class="mode">
+            <div class="todo-title" :class="mode">
                 <div class="txt">
-                    <span class="icon-span">📃</span>
+                    <span class="icon-span iconfont icon-liebiao" @click="showCollapseMenu = !showCollapseMenu"></span>
                     <span class="title-span">{{ title }}</span>
                     <span class="num-span">{{ todosNum }}</span>
                 </div>
                 <div class="options">
-                    <span @click="changeLockState">
-                        <span v-if="isLocked">🔒</span>
-                        <span v-else>🔓</span>
+                    <span @click="todoState.changeLockStatus">
+                        <span v-if="isLocked" class="iconfont icon-suoding"></span>
+                        <span v-else class="iconfont icon-jiesuo"></span>
                     </span>
-                    <span>🚮</span>
+                    <span class="iconfont icon-shanchu"></span>
                 </div>
             </div>
+            <div class="collapse-menu" :class="{ show: showCollapseMenu }">
+                <menu-vue></menu-vue>
+            </div>
             <div class="add-todo">
-                <!-- <span class="icon-span">+</span> -->
                 <input class="add-todo-input" type="text" placeholder="请输入">
             </div>
         </div>
-        <div class="main-content"></div>
+        <div class="main-content">
+
+        </div>
     </div>
 </template>
 
@@ -46,10 +51,20 @@ const changeLockState: () => void = () => {
     width: 100%;
     height: 100%;
     background: #fff;
+    transition: all .3s;
+
+    &.dark {
+        background: #262626;
+    }
 
     .main-header {
-        height: 80px;
+        // height: 80px;
         background: linear-gradient(180deg, #d0edf5, #e1e5f0);
+        transition: all .3s;
+
+        &.dark{
+            background: #3b3b3b;
+        }
 
         .todo-title {
             padding: 0 18px;
@@ -58,13 +73,19 @@ const changeLockState: () => void = () => {
             display: flex;
             justify-content: space-between;
             line-height: 45px;
+            color: #1c3f53;
+            transition: all .3s;
+
+            &.dark{
+                color: #fff;
+            }
 
             .txt {
                 font-weight: bold;
-                color: #1c3f53;
 
                 .icon-span {
                     display: none;
+                    margin-right: 14px;
                 }
 
                 @media screen and (max-width: 768px) {
@@ -96,8 +117,23 @@ const changeLockState: () => void = () => {
             .options {
 
                 span {
-                    margin-left: 4px;
+                    margin-left: 8px;
                     cursor: pointer;
+                }
+            }
+        }
+
+        .collapse-menu {
+            height: 0;
+            transition: all .3s;
+            overflow: auto;
+
+        }
+
+        @media screen and (max-width: 768px) {
+            .collapse-menu {
+                &.show {
+                    height: 360px;
                 }
             }
         }
@@ -107,20 +143,6 @@ const changeLockState: () => void = () => {
             display: flex;
             padding: 0 10px;
 
-            .icon-span {
-                font-size: 12px;
-                font-weight: bold;
-                color: #9a9a9a;
-                text-align: center;
-                height: 12px;
-                width: 12px;
-                margin-left: 20px;
-                margin-top: 9px;
-                line-height: 9px;
-                border: #9a9a9a 2px solid;
-                border-radius: 100%;
-            }
-
             .add-todo-input {
                 outline: none;
                 border: none;
@@ -128,10 +150,13 @@ const changeLockState: () => void = () => {
                 height: 100%;
                 background: none;
                 font-size: 14px;
-                color: #1c3f53;
                 padding: 0 10px;
             }
         }
     }
+
+    .main-content {}
+
+
 }
 </style>

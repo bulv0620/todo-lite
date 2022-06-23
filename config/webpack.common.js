@@ -14,7 +14,10 @@ const commonConfig = {
         chunkFilename: 'js/[name][contenthash:8].chunk.js',
     },
     resolve: {
-        extensions: ['.js', '.json', '.ts', '.vue']
+        extensions: ['.js', '.json', '.ts', '.vue'],
+        alias: {
+    		'@': resolvePath('./src')
+    	}
     },
     optimization: {
         splitChunks: {
@@ -35,6 +38,18 @@ const commonConfig = {
     },
     module: {
         rules: [
+            {
+                test: /\.(jpe?g|png|gif|svg)$/,
+                type: 'asset',
+                generator: {
+                    filename: 'img/[name].[hash:8][ext]',
+                },
+                parser: {
+                    dataUrlCondition: {
+                        maxSize: 100 * 1024
+                    }
+                }
+            },
             {
                 test: /\.less$/,
                 use: ['style-loader', 'css-loader', 'less-loader']

@@ -1,17 +1,9 @@
-import { defineStore } from "pinia";
+import { useMenu } from "./useMenu";
+import { useTodo } from "./useTodo";
+import { useTheme } from "./useTheme";
 
-export const themeStore = defineStore('theme', {
-    state: () => {
-        return {
-            
-        }
-    },
-
-    getters: {
-
-    },
-
-    actions: {
-
-    }
-})
+export {
+    useMenu,
+    useTheme,
+    useTodo
+}
