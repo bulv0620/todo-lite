@@ -1,162 +1,134 @@
 <script setup lang="ts">
-import { reactive, toRefs, ref } from 'vue';
-import { useTodo } from '../store';
-import { useTheme } from '../store';
-
+import { toRefs, reactive } from 'vue';
 import { storeToRefs } from 'pinia';
-import MenuVue from './Menu.vue';
+import { useTodo } from '../store';
+
+const props = defineProps({
+    mode: {
+        type: String,
+        default: 'light'
+    }
+})
 
 const todoState = useTodo();
 
-const showCollapseMenu = ref(false);
+const { activeItem } = storeToRefs(todoState);
 
-const { id, title, isLocked, todosNum, todoList } = storeToRefs(todoState);
-
-const {mode} = storeToRefs(useTheme());
-
+// 删除待办
+function removeTodoItem(index: any): void {
+    if (confirm('是否删除?')) {
+        todoState.removeTodoItem(<number>index);
+    }
+}
 </script>
 
 <template>
-    <div class="todo-list-main" :class="mode">
-        <div class="main-header" :class="mode">
-            <div class="todo-title" :class="mode">
-                <div class="txt">
-                    <span class="icon-span iconfont icon-liebiao" @click="showCollapseMenu = !showCollapseMenu"></span>
-                    <span class="title-span">{{ title }}</span>
-                    <span class="num-span">{{ todosNum }}</span>
-                </div>
-                <div class="options">
-                    <span @click="todoState.changeLockStatus">
-                        <span v-if="isLocked" class="iconfont icon-suoding"></span>
-                        <span v-else class="iconfont icon-jiesuo"></span>
-                    </span>
-                    <span class="iconfont icon-shanchu"></span>
-                </div>
-            </div>
-            <div class="collapse-menu" :class="{ show: showCollapseMenu }">
-                <menu-vue></menu-vue>
-            </div>
-            <div class="add-todo">
-                <input class="add-todo-input" type="text" placeholder="请输入">
-            </div>
-        </div>
-        <div class="main-content">
+    <div class="todo-content" :class="mode">
+        <ul>
+            <li v-for="(todoItem, index) in activeItem.todoList" :key="todoItem">
+                <input type="checkbox" v-model="todoItem.isDone">
+                <span class="item-txt" :class="{ done: todoItem.isDone }">{{ todoItem.text }}</span>
+                <span class="delete-item iconfont icon-shanchu" @click="removeTodoItem(index)"></span>
+                <!-- <div class="item-panel" style="height:30px;background: #fff;width: 100%;"></div> -->
+            </li>
+        </ul>
 
-        </div>
     </div>
 </template>
 
 <style scoped lang="less">
-.todo-list-main {
+.todo-content.dark {
+    background: #262626;
+
+    ul {
+        li {
+            box-shadow: 0 1px 0 0 #404040;
+
+            &:hover {
+                background: #404040;
+            }
+
+            span {
+                color: #b1b1b1;
+
+                &.done {
+                    color: #707070;
+                }
+            }
+        }
+    }
+
+}
+
+.todo-content {
     width: 100%;
     height: 100%;
     background: #fff;
-    transition: all .3s;
+    transition: all .4s;
 
-    &.dark {
-        background: #262626;
-    }
+    ul {
+        list-style: none;
 
-    .main-header {
-        // height: 80px;
-        background: linear-gradient(180deg, #d0edf5, #e1e5f0);
-        transition: all .3s;
-
-        &.dark{
-            background: #3b3b3b;
-        }
-
-        .todo-title {
-            padding: 0 18px;
-            height: 45px;
-            font-size: 18px;
+        li {
+            // height: 46px;
+            line-height: 46px;
+            padding: 0 12px;
+            box-shadow: 0 1px 0 0 #f5f5f5;
+            transition: all .5s ease;
+            position: relative;
             display: flex;
-            justify-content: space-between;
-            line-height: 45px;
-            color: #1c3f53;
-            transition: all .3s;
 
-            &.dark{
-                color: #fff;
-            }
+            &:hover {
+                background: #f5f5f5;
 
-            .txt {
-                font-weight: bold;
-
-                .icon-span {
-                    display: none;
-                    margin-right: 14px;
-                }
-
-                @media screen and (max-width: 768px) {
-                    .icon-span {
-                        display: inline;
-                    }
-                }
-
-                .num-span {
-                    // margin-left: 8px;
-                    color: #fff;
-                    float: right;
+                .delete-item {
                     display: block;
-                    background: #2cc5e2;
-                    margin-top: 14px;
-                    height: 20px;
-                    width: 20px;
-                    line-height: 20px;
-                    text-align: center;
-                    border-radius: 100%;
-                    font-size: 12px;
                 }
 
-                span {
-                    margin-right: 4px;
+                .item-txt {
+                    word-break: keep-all;
+                    white-space: unset;
+                    overflow: hidden;
+                    text-overflow: unset;
                 }
             }
 
-            .options {
 
-                span {
-                    margin-left: 8px;
-                    cursor: pointer;
+
+            input[type="checkbox"] {
+                margin-right: 6px;
+                margin-top: 18px;
+                // width: ;
+            }
+
+            .item-txt {
+                color: #707070;
+                font-size: 16px;
+                transition: all .4s ease;
+                display: block;
+                word-break: keep-all;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                cursor: pointer;
+                padding-top: 2px;
+                padding-right: 10px;
+
+                &.done {
+                    color: #b1b1b1;
+                    text-decoration: line-through;
                 }
             }
-        }
 
-        .collapse-menu {
-            height: 0;
-            transition: all .3s;
-            overflow: auto;
-
-        }
-
-        @media screen and (max-width: 768px) {
-            .collapse-menu {
-                &.show {
-                    height: 360px;
-                }
-            }
-        }
-
-        .add-todo {
-            height: 35px;
-            display: flex;
-            padding: 0 10px;
-
-            .add-todo-input {
-                outline: none;
-                border: none;
-                width: 100%;
-                height: 100%;
-                background: none;
+            .delete-item {
+                color: #ccc;
+                position: absolute;
+                right: 10px;
                 font-size: 14px;
-                padding: 0 10px;
+                padding-top: 1px;
+                display: none;
             }
         }
     }
-
-    .main-content {}
-
-
 }
 </style>

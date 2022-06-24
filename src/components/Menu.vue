@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { reactive, toRefs } from 'vue';
-import {useMenu} from '../store';
+import { useTodo } from '../store';
 import { storeToRefs } from 'pinia';
 
 const props = defineProps({
@@ -18,21 +18,36 @@ const props = defineProps({
     }
 });
 
-const menuState = useMenu();
-const {activeItemId, menuList} = storeToRefs(menuState)
+const todoState = useTodo();
 
+const { activeItemId, menuList } = storeToRefs(todoState);
+
+
+function addMenuItem() {
+    let menuTitle: (string | null) = prompt('输入新的分类的标题');
+    if (menuTitle !== null && menuTitle !== "") {
+        todoState.addMenuItem(menuTitle)
+        todoState.save()
+    }
+}
 </script>
 
 <template>
     <div class="todo-list-menu">
         <ul class="menu-list">
+            <li class="menu-item" @click="addMenuItem">
+                <span class="new-menu">+ 新建集合</span>
+            </li>
             <li class="menu-item" :class="{ active: activeItemId === menuItem.id }" v-for="menuItem in menuList"
-                :key="menuItem.id" @click="menuState.setActiveItemId(menuItem.id)">
+                :key="menuItem.id" @click="todoState.setActiveItemId(menuItem.id)">
                 <span class="icon-span iconfont icon-suoding" :class="{ show: menuItem.isLocked }"></span> {{
                         menuItem.title
                 }}
-                <span v-if="showNum" class="num-span" :class="{ active: activeItemId === menuItem.id }">{{ menuItem.todosNum }}</span>
+                <span v-if="showNum" class="num-span" :class="{ active: activeItemId === menuItem.id }">{{
+                        menuItem.todoList.length
+                }}</span>
             </li>
+
         </ul>
     </div>
 </template>
@@ -40,6 +55,8 @@ const {activeItemId, menuList} = storeToRefs(menuState)
 <style scoped lang="less">
 .todo-list-menu {
     // padding-left: 50px;
+    // padding-bottom: 10px;
+    height: 100%;
 
     .menu-list {
         list-style: none;
@@ -79,6 +96,11 @@ const {activeItemId, menuList} = storeToRefs(menuState)
                 &.show {
                     opacity: 1;
                 }
+            }
+
+            .new-menu {
+                padding-left: 6px;
+                color: #fff;
             }
 
             &.active {
