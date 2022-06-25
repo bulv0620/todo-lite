@@ -20,6 +20,9 @@ function removeTodoItem(index: any): void {
         todoState.removeTodoItem(<number>index);
     }
 }
+
+// 修改待办内容
+// function edit
 </script>
 
 <template>
@@ -97,7 +100,7 @@ function removeTodoItem(index: any): void {
 
             input[type="checkbox"] {
                 margin-right: 6px;
-                margin-top: 18px;
+                // margin-top: 18px;
                 // width: ;
             }
 

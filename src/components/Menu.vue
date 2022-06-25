@@ -20,7 +20,7 @@ const props = defineProps({
 
 const todoState = useTodo();
 
-const { activeItemId, menuList } = storeToRefs(todoState);
+const { activeItemIndex, menuList } = storeToRefs(todoState);
 
 
 function addMenuItem() {
@@ -38,12 +38,12 @@ function addMenuItem() {
             <li class="menu-item" @click="addMenuItem">
                 <span class="new-menu">+ 新建集合</span>
             </li>
-            <li class="menu-item" :class="{ active: activeItemId === menuItem.id }" v-for="menuItem in menuList"
-                :key="menuItem.id" @click="todoState.setActiveItemId(menuItem.id)">
+            <li class="menu-item" :class="{ active: activeItemIndex === index }" v-for="(menuItem, index) in menuList"
+                :key="menuItem.id" @click="todoState.setActiveItemIndex(index)">
                 <span class="icon-span iconfont icon-suoding" :class="{ show: menuItem.isLocked }"></span> {{
                         menuItem.title
                 }}
-                <span v-if="showNum" class="num-span" :class="{ active: activeItemId === menuItem.id }">{{
+                <span v-if="showNum" class="num-span" :class="{ active: activeItemIndex === index }">{{
                         menuItem.todoList.length
                 }}</span>
             </li>

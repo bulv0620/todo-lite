@@ -39,7 +39,10 @@ function addTodoItem(): void {
 
 function removeMenuItem(): void {
     if (confirm('是否删除?')) {
-        todoState.removeMenuItem();
+        const res = todoState.removeMenuItem()
+        if(!res){
+            alert('删除失败,不能少于一个分类!')
+        }
     }
 }
 </script>

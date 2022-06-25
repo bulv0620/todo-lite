@@ -30,21 +30,22 @@ export const useTodo = defineStore('todo', {
                     ]
                 }
             ],
-            activeItemId: 0
+            activeItemIndex: 0,
+            
         }
     },
 
     getters: {
-        activeItem: (state) => state.menuList[state.activeItemId],
+        activeItem: (state) => state.menuList[state.activeItemIndex],
     },
 
     actions: {
         changeLockStatus(): void {
-            this.menuList[this.activeItemId].isLocked = !this.menuList[this.activeItemId].isLocked;
+            this.activeItem.isLocked = !this.activeItem.isLocked;
         },
 
-        setActiveItemId(id: number): void {
-            this.activeItemId = id
+        setActiveItemIndex(index: number): void {
+            this.activeItemIndex = index
         },
 
         addTodoItem(text: string): void {
@@ -76,10 +77,14 @@ export const useTodo = defineStore('todo', {
             this.save()
         },
 
-        removeMenuItem(): void {
+        removeMenuItem(): boolean {
+            if(this.menuList.length < 2){
+                return false;
+            }
             this.menuList.splice(this.menuList.findIndex((e) => e === this.activeItem), 1);
-            this.activeItemId = 0; 
+            this.activeItemIndex = 0; 
             this.save();
+            return true;
         },
 
         save(): void {
