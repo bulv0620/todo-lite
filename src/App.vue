@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import LayoutVue from './layout/Layout.vue';
-
-
 </script>
 
 <template>
