@@ -23,7 +23,7 @@ const todoState = useTodo();
 const { activeItemIndex, menuList } = storeToRefs(todoState);
 
 
-function addMenuItem() {
+function addMenuItem(): void {
     let menuTitle: (string | null) = prompt('输入新的分类的标题');
     if (menuTitle !== null && menuTitle !== "") {
         todoState.addMenuItem(menuTitle)

@@ -1,13 +1,13 @@
 import { defineStore } from "pinia";
 
-interface menuItem {
+export interface IMenuItem {
     id: number,
     title: string,
     isLocked: boolean,
-    todoList: Array<todoItem>
+    todoList: Array<ITodoItem>
 }
 
-interface todoItem {
+export interface ITodoItem {
     id: number,
     text: string,
     isDone: boolean

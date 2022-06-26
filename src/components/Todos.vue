@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { toRefs, reactive } from 'vue';
 import { storeToRefs } from 'pinia';
-import { useTodo } from '../store';
+import { useTodo, ITodoItem } from '../store/useTodo';
 
 const props = defineProps({
     mode: {
@@ -22,7 +22,13 @@ function removeTodoItem(index: any): void {
 }
 
 // 修改待办内容
-// function edit
+function editTodo(todoItem: ITodoItem): void {
+    let newText: (string | null) = prompt('输入新的标题');
+    if (newText !== null && newText !== "") {
+        todoItem.text = newText;
+        todoState.save();
+    }
+}
 </script>
 
 <template>
@@ -30,7 +36,7 @@ function removeTodoItem(index: any): void {
         <ul>
             <li v-for="(todoItem, index) in activeItem.todoList" :key="todoItem">
                 <input type="checkbox" v-model="todoItem.isDone">
-                <span class="item-txt" :class="{ done: todoItem.isDone }">{{ todoItem.text }}</span>
+                <span class="item-txt" :class="{ done: todoItem.isDone }" @click="editTodo(todoItem)">{{ todoItem.text }}</span>
                 <span class="delete-item iconfont icon-shanchu" @click="removeTodoItem(index)"></span>
                 <!-- <div class="item-panel" style="height:30px;background: #fff;width: 100%;"></div> -->
             </li>
