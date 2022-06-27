@@ -1,21 +1,10 @@
 import Mock from 'mockjs';
-import { success, error, IResponse } from './response';
+import { success, error } from './response';
 import { uuid } from './uuid';
+import { IResponse, IMenuItem, ITodoItem } from '../types/index'
 
-interface IMenuItem {
-    id?: string,
-    title?: string,
-    isLocked?: boolean,
-}
-
-interface ITodoItem {
-    id?: string,
-    text?: string,
-    isDone?: boolean,
-    belongTo: string
-}
-
-interface IOptions {
+// 选项类型接口
+export interface IOptions {
     url: string,
     type: string,
     body?: string
@@ -39,7 +28,7 @@ let todoList: ITodoItem[] = [
     {
         id: '1002',
         text: '新建的待办事项',
-        isDone: false,
+        isDone: true,
         belongTo: '1'
     }
 ]
@@ -62,6 +51,9 @@ Mock.mock('/api/menu/add', 'post', addMenuItem);
 
 // 删除集合以及对应的待办
 function removeMenuItem(options: IOptions): IResponse {
+    if(menuList.length < 2){
+        return error('不能少于一个集合');
+    }
     const { id }: IMenuItem = JSON.parse(<string>options.body);
     menuList.splice(menuList.findIndex((item) => item.id === id), 1);
     todoList = todoList.filter(item => item.belongTo === id);
@@ -84,8 +76,8 @@ Mock.mock('/api/menu/edit', 'post', editMenuItem);
 
 // 获取集合的待办事项列表
 function getTodoList(options: IOptions): IResponse {
-    const { id }: IMenuItem = JSON.parse(<string>options.body);
-    return success(todoList.filter(item => item.belongTo === id), '获取待办事项列表成功');
+    const { belongTo }: ITodoItem = JSON.parse(<string>options.body);
+    return success(todoList.filter(item => item.belongTo === belongTo), '获取待办事项列表成功');
 }
 Mock.mock('/api/todos/list', 'post', getTodoList);
 
@@ -127,7 +119,7 @@ Mock.mock('/api/todos/remove', 'post', removeTodoItem);
 function doneTodoItem(options: IOptions): IResponse {
     const { id }: ITodoItem = JSON.parse(<string>options.body);
     const todoItem: ITodoItem | undefined = todoList.find(item => item.id === id);
-    if(!todoItem){
+    if (!todoItem) {
         return error('待办事项不存在!');
     }
     todoItem.isDone = !todoItem.isDone;

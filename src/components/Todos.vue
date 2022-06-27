@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { toRefs, reactive } from 'vue';
 import { storeToRefs } from 'pinia';
-import { useTodo, ITodoItem } from '../store/useTodo';
+import { useTodo } from '../store/useTodo';
 
 const props = defineProps({
     mode: {
@@ -10,34 +10,43 @@ const props = defineProps({
     }
 })
 
-const todoState = useTodo();
+const todoStore = useTodo();
 
-const { activeItem } = storeToRefs(todoState);
+const { todoList } = storeToRefs(todoStore);
 
 // 删除待办
-function removeTodoItem(index: any): void {
+async function removeTodoItem(id: string | undefined) {
     if (confirm('是否删除?')) {
-        todoState.removeTodoItem(<number>index);
+        await todoStore.removeTodoItem(<string>id);
+        await todoStore.getTodoList();
     }
 }
 
 // 修改待办内容
-function editTodo(todoItem: ITodoItem): void {
+async function editTodo(id: string | undefined) {
     let newText: (string | null) = prompt('输入新的标题');
     if (newText !== null && newText !== "") {
-        todoItem.text = newText;
-        todoState.save();
+        await todoStore.editTodoItem(newText, <string>id);
+        await todoStore.getTodoList();
     }
+}
+
+// 修改待办的完成状态
+async function doneTodoItem(id: string | undefined) {
+    await todoStore.doneTodoItem(<string>id);
+    await todoStore.getTodoList();
 }
 </script>
 
 <template>
     <div class="todo-content" :class="mode">
         <ul>
-            <li v-for="(todoItem, index) in activeItem.todoList" :key="todoItem">
-                <input type="checkbox" v-model="todoItem.isDone">
-                <span class="item-txt" :class="{ done: todoItem.isDone }" @click="editTodo(todoItem)">{{ todoItem.text }}</span>
-                <span class="delete-item iconfont icon-shanchu" @click="removeTodoItem(index)"></span>
+            <li v-for="(todoItem, index) in todoList" :key="todoItem.id">
+                <input type="checkbox" :check="todoItem.isDone" @click="doneTodoItem(todoItem.id)">
+                <span class="item-txt" :class="{ done: todoItem.isDone }" @click="editTodo(todoItem.id)">{{
+                        todoItem.text
+                }}</span>
+                <span class="delete-item iconfont icon-shanchu" @click="removeTodoItem(todoItem.id)"></span>
                 <!-- <div class="item-panel" style="height:30px;background: #fff;width: 100%;"></div> -->
             </li>
         </ul>

@@ -2,6 +2,7 @@
 import { reactive, toRefs } from 'vue';
 import { useTodo } from '../store';
 import { storeToRefs } from 'pinia';
+import { watch } from 'fs';
 
 const props = defineProps({
     txtColor: {
@@ -18,16 +19,16 @@ const props = defineProps({
     }
 });
 
-const todoState = useTodo();
+const todoStore = useTodo();
 
-const { activeItemIndex, menuList } = storeToRefs(todoState);
+const { activeMenuIndex, menuList, todoList } = storeToRefs(todoStore);
 
-
-function addMenuItem(): void {
+// 添加集合
+async function addMenuItem() {
     let menuTitle: (string | null) = prompt('输入新的分类的标题');
     if (menuTitle !== null && menuTitle !== "") {
-        todoState.addMenuItem(menuTitle)
-        todoState.save()
+        await todoStore.addMenuItem(menuTitle);
+        await todoStore.getMenuList();
     }
 }
 </script>
@@ -38,13 +39,13 @@ function addMenuItem(): void {
             <li class="menu-item" @click="addMenuItem">
                 <span class="new-menu">+ 新建集合</span>
             </li>
-            <li class="menu-item" :class="{ active: activeItemIndex === index }" v-for="(menuItem, index) in menuList"
-                :key="menuItem.id" @click="todoState.setActiveItemIndex(index)">
+            <li class="menu-item" :class="{ active: activeMenuIndex === index }" v-for="(menuItem, index) in menuList"
+                :key="menuItem.id" @click="todoStore.setActiveMenuIndex(index)">
                 <span class="icon-span iconfont icon-suoding" :class="{ show: menuItem.isLocked }"></span> {{
                         menuItem.title
                 }}
-                <span v-if="showNum" class="num-span" :class="{ active: activeItemIndex === index }">{{
-                        menuItem.todoList.length
+                <span v-if="showNum" class="num-span" :class="{ active: activeMenuIndex === index }">{{
+                        todoList.length
                 }}</span>
             </li>
 

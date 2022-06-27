@@ -1,94 +1,109 @@
-import { defineStore } from "pinia";
-
-export interface IMenuItem {
-    id: number,
-    title: string,
-    isLocked: boolean,
-    todoList: Array<ITodoItem>
-}
-
-export interface ITodoItem {
-    id: number,
-    text: string,
-    isDone: boolean
-}
+import { defineStore, getActivePinia } from "pinia";
+import { IMenuItem, ITodoItem } from '../types'
+import * as api from '../api'
 
 export const useTodo = defineStore('todo', {
     state: () => {
         return {
-            menuList: JSON.parse(<string>localStorage.getItem('menuList')) || [
-                {
-                    id: 0,
-                    title: '新建的分类',
-                    isLocked: false,
-                    todoList: [
-                        {
-                            id: 0,
-                            text: '新建的待办事项',
-                            isDone: false
-                        }
-                    ]
-                }
-            ],
-            activeItemIndex: 0,
-            
+            menuList: [] as IMenuItem[],
+            todoList: [] as ITodoItem[],
+            activeMenuIndex: 0 as number,
         }
     },
 
     getters: {
-        activeItem: (state) => state.menuList[state.activeItemIndex],
+        activeMenuId: (state) => state.menuList[state.activeMenuIndex].id || '',
+        activeMenuItem: (state) => state.menuList[state.activeMenuIndex] || {}
     },
 
     actions: {
-        changeLockStatus(): void {
-            this.activeItem.isLocked = !this.activeItem.isLocked;
-        },
+        // changeLockStatus(): void {
 
-        setActiveItemIndex(index: number): void {
-            this.activeItemIndex = index
-        },
+        // },
 
-        addTodoItem(text: string): void {
-            const id = this.activeItem.todoList.length;
-            const isDone = false;
-            this.activeItem.todoList.push({
-                id,
-                isDone,
-                text
-            });
-            this.save();
-        },
-
-        addMenuItem(title: string): void {
-            const id = this.menuList.length;
-            const isLocked = false;
-            const todoList = [];
-            this.menuList.push({
-                id,
-                isLocked,
-                todoList,
-                title
-            });
-            this.save()
-        },
-
-        removeTodoItem(index: number): void {
-            this.activeItem.todoList.splice(index, 1);
-            this.save()
-        },
-
-        removeMenuItem(): boolean {
-            if(this.menuList.length < 2){
-                return false;
+        // 获取集合列表
+        async getMenuList() {
+            const res = await api.reqGetMenuList();
+            if (res.code === 0) {
+                this.menuList = res.data || [];
+                console.log(res.message);
             }
-            this.menuList.splice(this.menuList.findIndex((e) => e === this.activeItem), 1);
-            this.activeItemIndex = 0; 
-            this.save();
-            return true;
         },
 
-        save(): void {
-            localStorage.setItem('menuList', JSON.stringify(this.menuList))
+        // 设置活跃的集合
+        setActiveMenuIndex(index: number) {
+            this.activeMenuIndex = index;
+            this.getTodoList();
+        },
+
+        // 添加集合
+        async addMenuItem(title: string) {
+            const res = await api.reqAddMenuItem({ title });
+            if (res.code === 0) {
+                console.log(res.message);
+            }
+        },
+
+        // 删除集合
+        async removeMenuItem(id: string) {
+            const res = await api.reqRemoveMenuItem({ id });
+            if (res.code === 0) {
+                console.log(res.message);
+            }
+            else {
+                Promise.reject(res.message);
+            }
+        },
+
+        // 修改集合的名字
+        async editMenuItem(id: string, title: string) {
+            const res = await api.reqEditMenuItem({ id, title });
+            if (res.code === 0) {
+                console.log(res.message);
+            }
+        },
+
+        // 获取集合的待办事项列表
+        async getTodoList() {
+            const res = await api.reqGetTodoList({ belongTo: this.activeMenuId });
+            if (res.code === 0) {
+                this.todoList = res.data || [];
+            }
+        },
+
+        // 添加待办事项
+        async addTodoItem(text: string) {
+            const res = await api.reqAddTodoItem({ text, belongTo: this.activeMenuId });
+            if (res.code === 0) {
+                console.log(res.message);
+            }
+        },
+
+        // 修改待办事项内容
+        async editTodoItem(text: string, id: string) {
+            const res = await api.reqEditTodoItem({ text, id });
+            if (res.code === 0) {
+                console.log(res.message);
+            }
+        },
+
+        // 删除待办事项
+        async removeTodoItem(id: string) {
+            const res = await api.reqRemoveTodoItem({ id });
+            if (res.code === 0) {
+                console.log(res.message);
+                this.activeMenuIndex = 0;
+            }
+        },
+
+        // 修改完成状态
+        async doneTodoItem(id: string) {
+            const res = await api.reqDoneTodoItem({ id });
+            if (res.code === 0) {
+                console.log(res.message);
+            }
         }
+
+
     }
 })

@@ -3,21 +3,27 @@ import TodosVue from '../components/Todos.vue';
 import MenuVue from '../components/Menu.vue';
 import HeaderVue from '../components/Header.vue';
 
-import { useTheme } from '../store';
+import { useTheme, useTodo } from '../store';
 import { storeToRefs } from 'pinia';
+import { onBeforeMount, onMounted } from 'vue';
 
-const themeState = useTheme();
+const themeStore = useTheme();
+const { mode } = storeToRefs(themeStore);
 
-const { mode } = storeToRefs(themeState);
+const todoStore = useTodo();
 
+onBeforeMount(async () => {
+    await todoStore.getMenuList();
+    await todoStore.getTodoList();
+})
 </script>
 
 <template>
     <div class="container" :class="mode">
         <div class="layout">
-            <button class="mode-btn" @click="themeState.changeMode">
-                <span class="sun iconfont icon-taiyang" :class="{active: mode === 'light'}"></span>
-                <span class="moon iconfont icon-yueliang" :class="{active: mode === 'dark'}"></span>
+            <button class="mode-btn" @click="themeStore.changeMode">
+                <span class="sun iconfont icon-taiyang" :class="{ active: mode === 'light' }"></span>
+                <span class="moon iconfont icon-yueliang" :class="{ active: mode === 'dark' }"></span>
             </button>
             <div class="menu h">
                 <menu-vue :showNum="true"></menu-vue>

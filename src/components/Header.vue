@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, toRefs, ref } from 'vue';
+import { ref } from 'vue';
 import { useTodo } from '../store';
 import { storeToRefs } from 'pinia';
 import MenuVue from './Menu.vue';
@@ -15,34 +15,34 @@ const props = defineProps({
 const showCollapseMenu = ref(false);
 
 // todo状态信息
-const todoState = useTodo();
+const todoStore = useTodo();
 
 // 解构
-const { activeItem } = storeToRefs(todoState);
+const { activeMenuItem, todoList } = storeToRefs(todoStore);
 
 // 修改标题
-function editTitle(): void {
+async function editTitle() {
     let newTitle: (string | null) = prompt('输入新的标题');
     if (newTitle !== null && newTitle !== "") {
-        activeItem.value.title = newTitle;
-        todoState.save()
+        await todoStore.editMenuItem(<string>activeMenuItem.value.id, newTitle);
+        await todoStore.getMenuList();
     }
 }
 
 // 添加新的代办
 const newTodoText = ref('')
-
-function addTodoItem(): void {
-    todoState.addTodoItem(newTodoText.value);
-    newTodoText.value = '';
+async function addTodoItem() {
+    await todoStore.addTodoItem(newTodoText.value);
+    await todoStore.getTodoList();
+    newTodoText.value = ''
 }
 
-function removeMenuItem(): void {
+// 删除集合
+async function removeMenuItem() {
     if (confirm('是否删除?')) {
-        const res = todoState.removeMenuItem()
-        if(!res){
-            alert('删除失败,不能少于一个分类!')
-        }
+        await todoStore.removeMenuItem(<string>activeMenuItem.value.id);
+        await todoStore.getMenuList();
+        await todoStore.getTodoList();
     }
 }
 </script>
@@ -52,9 +52,8 @@ function removeMenuItem(): void {
         <div class="todo-title">
             <div class="txt">
                 <span class="icon-span iconfont icon-liebiao" @click="showCollapseMenu = !showCollapseMenu"></span>
-                <span class="title-span" @click="editTitle">{{ activeItem.title }}</span>
-                <!-- <input class="title-input" type="text" v-model="title" > -->
-                <span class="num-span">{{ activeItem.todoList.length }}</span>
+                <span class="title-span" @click="editTitle">{{ activeMenuItem.title }}</span>
+                <span class="num-span">{{ todoList.length }}</span>
             </div>
             <div class="options">
                 <!-- <span @click="todoState.changeLockStatus">
