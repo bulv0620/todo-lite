@@ -27,13 +27,13 @@ const commonConfig = {
                     test: /[\\/]node_modules[\\/]/,
                     filename: 'js/[name][contenthash:8].vendor.js',
                     priority: -10,
-                    maxSize: 50 * 1024
+                    maxSize: 100 * 1024
                 },
                 default: {
                     minChunks: 2,
                     filename: 'js/[name][contenthash:8].bundle.js',
                     priority: -20,
-                    maxSize: 50 * 1024
+                    maxSize: 100 * 1024
                 }
             }
         }
@@ -48,7 +48,7 @@ const commonConfig = {
                 },
                 parser: {
                     dataUrlCondition: {
-                        maxSize: 50 * 1024
+                        maxSize: 100 * 1024
                     }
                 }
             },

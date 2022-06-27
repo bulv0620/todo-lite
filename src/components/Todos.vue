@@ -115,11 +115,13 @@ async function doneTodoItem(id: string | undefined) {
 
             input[type="checkbox"] {
                 margin-right: 6px;
-                // margin-top: 18px;
+                margin-top: 2px;
+                height: 46px;
                 // width: ;
             }
 
             .item-txt {
+                line-height: 46px;
                 color: #707070;
                 font-size: 16px;
                 transition: all .4s ease;
