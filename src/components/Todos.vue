@@ -19,6 +19,7 @@ async function removeTodoItem(id: string | undefined) {
     if (confirm('是否删除?')) {
         await todoStore.removeTodoItem(<string>id);
         await todoStore.getTodoList();
+        await todoStore.getMenuList();
     }
 }
 
@@ -110,8 +111,6 @@ async function doneTodoItem(id: string | undefined) {
                     text-overflow: unset;
                 }
             }
-
-
 
             input[type="checkbox"] {
                 margin-right: 6px;

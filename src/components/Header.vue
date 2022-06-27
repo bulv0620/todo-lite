@@ -34,6 +34,7 @@ const newTodoText = ref('')
 async function addTodoItem() {
     await todoStore.addTodoItem(newTodoText.value);
     await todoStore.getTodoList();
+    await todoStore.getMenuList();
     newTodoText.value = ''
 }
 

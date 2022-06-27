@@ -69,6 +69,7 @@ export const useTodo = defineStore('todo', {
             const res = await api.reqGetTodoList({ belongTo: this.activeMenuId });
             if (res.code === 0) {
                 this.todoList = res.data || [];
+                console.log(res.message, res.data);
             }
         },
 

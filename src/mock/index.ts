@@ -40,7 +40,7 @@ function getMenuList(): IResponse {
     })
     return success(menuList, '获取集合列表成功!')
 }
-Mock.mock('/api/menu/list', 'get', getMenuList());
+Mock.mock('/api/menu/list', 'get', getMenuList);
 
 // 添加集合
 function addMenuItem(options: IOptions): IResponse {
@@ -52,7 +52,6 @@ function addMenuItem(options: IOptions): IResponse {
         isLocked: false,
         todoItemNum: 0
     });
-    console.log(menuList)
     return success('ok', '添加新集合成功!');
 }
 Mock.mock('/api/menu/add', 'post', addMenuItem);

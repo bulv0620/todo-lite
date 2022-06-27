@@ -21,7 +21,7 @@ const props = defineProps({
 
 const todoStore = useTodo();
 
-const { activeMenuIndex, menuList, todoList } = storeToRefs(todoStore);
+const { activeMenuIndex, menuList } = storeToRefs(todoStore);
 
 // 添加集合
 async function addMenuItem() {
