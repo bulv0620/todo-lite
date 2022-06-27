@@ -1,10 +1,10 @@
 # todo-lite
 
-[![OSCS Status](https://www.oscs1024.com/platform/badge/bulv0620/todo-list-vue3-ts.svg?size=small)](https://www.oscs1024.com/project/bulv0620/todo-list-vue3-ts?ref=badge_small)  ![vue: v3.2.37 (shields.io)](https://img.shields.io/badge/vue-v3.2.37-brightgreen)  ![pinia: v2.0.14 (shields.io)](https://img.shields.io/badge/pinia-v2.0.14-blue)
+[![OSCS Status](https://www.oscs1024.com/platform/badge/bulv0620/todo-list-vue3-ts.svg?size=small)](https://www.oscs1024.com/project/bulv0620/todo-list-vue3-ts?ref=badge_small)  ![vue: v3.2.37 (shields.io)](https://img.shields.io/badge/vue-v3.2.37-brightgreen)  ![pinia: v2.0.14 (shields.io)](https://img.shields.io/badge/pinia-v2.0.14-blue)  ![webpack: v5.73.0 (shields.io)](https://img.shields.io/badge/webpack-v5.73.0-red)
 
 Lightweight to-do program, simple and fresh ui style, responsive page layout, easy to adapt to various clients, making to-do records easy and pleasant.
 
-> demo go here:
+> demo go here: https://bulv0620.github.io/todo-lite/
 
 
 
