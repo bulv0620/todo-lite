@@ -42,7 +42,7 @@ async function doneTodoItem(id: string | undefined) {
     <div class="todo-content" :class="mode">
         <ul>
             <li v-for="(todoItem, index) in todoList" :key="todoItem.id">
-                <input type="checkbox" :check="todoItem.isDone" @click="doneTodoItem(todoItem.id)">
+                <input type="checkbox" :checked="todoItem.isDone" @click="doneTodoItem(todoItem.id)">
                 <span class="item-txt" :class="{ done: todoItem.isDone }" @click="editTodo(todoItem.id)">{{
                         todoItem.text
                 }}</span>

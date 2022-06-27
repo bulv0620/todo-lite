@@ -34,7 +34,13 @@ let todoList: ITodoItem[] = [
 ]
 
 // 获取集合列表
-Mock.mock('/api/menu/list', 'get', success(menuList, '获取集合列表成功!'));
+function getMenuList(): IResponse {
+    menuList.forEach(menuItem => {
+        menuItem.todoItemNum = todoList.filter(todoItem => todoItem.belongTo === menuItem.id).length;
+    })
+    return success(menuList, '获取集合列表成功!')
+}
+Mock.mock('/api/menu/list', 'get', getMenuList());
 
 // 添加集合
 function addMenuItem(options: IOptions): IResponse {
@@ -43,20 +49,22 @@ function addMenuItem(options: IOptions): IResponse {
     menuList.push({
         id,
         title,
-        isLocked: false
+        isLocked: false,
+        todoItemNum: 0
     });
+    console.log(menuList)
     return success('ok', '添加新集合成功!');
 }
 Mock.mock('/api/menu/add', 'post', addMenuItem);
 
 // 删除集合以及对应的待办
 function removeMenuItem(options: IOptions): IResponse {
-    if(menuList.length < 2){
+    if (menuList.length < 2) {
         return error('不能少于一个集合');
     }
     const { id }: IMenuItem = JSON.parse(<string>options.body);
     menuList.splice(menuList.findIndex((item) => item.id === id), 1);
-    todoList = todoList.filter(item => item.belongTo === id);
+    todoList = todoList.filter(item => item.belongTo !== id);
     return success('ok', '删除集合成功!');
 }
 Mock.mock('/api/menu/remove', 'post', removeMenuItem);

@@ -40,9 +40,13 @@ async function addTodoItem() {
 // 删除集合
 async function removeMenuItem() {
     if (confirm('是否删除?')) {
-        await todoStore.removeMenuItem(<string>activeMenuItem.value.id);
-        await todoStore.getMenuList();
-        await todoStore.getTodoList();
+        try {
+            await todoStore.removeMenuItem(<string>activeMenuItem.value.id);
+            await todoStore.getMenuList();
+            await todoStore.getTodoList();
+        } catch (error) {
+            alert(error)
+        }
     }
 }
 </script>

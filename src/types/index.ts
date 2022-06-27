@@ -3,6 +3,7 @@ export interface IMenuItem {
     id?: string,
     title?: string,
     isLocked?: boolean,
+    todoItemNum?: number
 }
 
 // 待办事项类型接口
@@ -14,7 +15,7 @@ export interface ITodoItem {
 }
 
 // 返回数据类型接口
-export interface IResponse<T=any> {
+export interface IResponse<T = any> {
     code: number,
     data?: T,
     message: string | undefined

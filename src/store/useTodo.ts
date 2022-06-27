@@ -26,7 +26,7 @@ export const useTodo = defineStore('todo', {
             const res = await api.reqGetMenuList();
             if (res.code === 0) {
                 this.menuList = res.data || [];
-                console.log(res.message);
+                console.log(res.message, res.data);
             }
         },
 
@@ -49,9 +49,10 @@ export const useTodo = defineStore('todo', {
             const res = await api.reqRemoveMenuItem({ id });
             if (res.code === 0) {
                 console.log(res.message);
+                this.activeMenuIndex = 0;
             }
             else {
-                Promise.reject(res.message);
+                return Promise.reject(res.message);
             }
         },
 
@@ -92,7 +93,6 @@ export const useTodo = defineStore('todo', {
             const res = await api.reqRemoveTodoItem({ id });
             if (res.code === 0) {
                 console.log(res.message);
-                this.activeMenuIndex = 0;
             }
         },
 

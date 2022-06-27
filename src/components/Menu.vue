@@ -45,7 +45,7 @@ async function addMenuItem() {
                         menuItem.title
                 }}
                 <span v-if="showNum" class="num-span" :class="{ active: activeMenuIndex === index }">{{
-                        todoList.length
+                        menuItem.todoItemNum
                 }}</span>
             </li>
 
